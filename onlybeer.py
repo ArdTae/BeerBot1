@@ -93,8 +93,8 @@ def event_info(message):
     user_data[user_id]['event_info'] = message.text  # Добавляем описание мероприятия в существующий словарь
     bot.send_message(message.chat.id, "Успешно подали заявку на публикацию!")
     bot.send_message(message.chat.id, "Анонс создан! Данные:\n" + str(user_data[user_id]))
-    print(icon)
-    print(icon2)
+    print(configonl.icon)
+    print(configonl.icon2)
     os.system('cls' if os.name == 'nt' else 'clear')
     logger.info(f"New publication: {user_data[user_id]}")
 bot.infinity_polling()
