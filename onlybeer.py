@@ -72,8 +72,8 @@ def process_category(message):
     user_data[user_id]['category'] = message.text
     bot.send_message(message.chat.id, "Анонс создан! Данные:\n" + str(user_data[user_id]))
     os.system('cls' if os.name == 'nt' else 'clear')
-    print(icon)
-    print(icon2)
+    print(configonl.icon)
+    print(configonl.icon2)
     logger.info(f"New event: {user_data[user_id]}")
 #Новый эвент---------------
 
