@@ -14,6 +14,7 @@ data_base = {}
 data_id = ""
 data_time = ()
 time_data = (datetime.datetime.now().time())
+user_name = {}
 os.system('cls' if os.name == 'nt' else 'clear')
 print(configonl.icon)
 print(configonl.icon2)
@@ -61,10 +62,9 @@ def menu(message):
             bot.register_next_step_handler(msg, process_date)
         elif message.text == "Профиль":
             bot.send_message(message.chat.id, "Раздел в разработке.")
+
             name_bot = bot.send_message(message.chat.id, "Введите ваше имя: ")
             bot.register_next_step_handler(name_bot, name_name)
-            user_n_data = bot.send_message(message.chat.id, "Введите дату рождения: ")
-            bot.register_next_step_handler(user_n_data, user_n1_data)
         elif message.text == "sk":
             bot.send_message(message.chat.id, "Бот остановлен.")
             logger.error("Bot stop polling.")
@@ -129,18 +129,23 @@ def event_info(message):
 #Профиль------------------
 def name_name(message):
     try:
-        user_id = message.from_user.id
-        user_data[user_id] = {"user_name:": message.text}
-        bot.send_message(message.chat.id, "Ваше имя:" + str(user_data[user_id]))
-        logger.info(f"Новый пользователь:\n"+ str(user_data[user_id]))
+        if str(message.chat.id) in datebase.user:
+            bot.send_message(message.chat.id, "Собалезную")
+        else:
+            user_id = message.from_user.id
+            user_name[user_id] = {"user_name:": message.text}
+            bot.send_message(message.chat.id, "Ваше имя:" + str(user_name[user_id]))
+            user_n_data = bot.send_message(message.chat.id, "Введите дату рождения: ")
+            bot.register_next_step_handler(user_n_data, user_n1_data)
+            logger.info(f"Новый пользователь:\n"+ str(user_name[user_id]))
     except Exception as e:
-        bot.send_message(message.chat.id, "Ошибка")     
+        bot.send_message(message.chat.id, "Ошибка 3")     
 def user_n1_data(message):
     try:
         user_id = message.from_user.id
         user_data[user_id] = {"Дата пользователя": message.text}
-        bot.send_message(message.chat.id, "Ваша дата:" + str(user_data[user_id]))
-
+        bot.send_message(message.chat.id, "Ваша дата:" + str(user_data[user_id]) + "\nВаше имя"+ str(user_name[user_id]))
+        logger.info("Новый пользователь: " + str(user_name[user_id]) + str(user_data[user_id]))
     except Exception as e:
         bot.send_message(message.chat.id, "Ошибка")
 #Админка--------------------
