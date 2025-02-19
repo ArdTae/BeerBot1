@@ -15,6 +15,11 @@ data_id = ""
 data_time = ()
 time_data = (datetime.datetime.now().time())
 user_name = {}
+
+markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+item1 = types.KeyboardButton("Профиль")
+item2 = types.KeyboardButton("Анонс мероприятия")
+item3 = types.KeyboardButton("Публикация")
 os.system('cls' if os.name == 'nt' else 'clear')
 print(configonl.icon)
 print(configonl.icon2)
@@ -33,10 +38,6 @@ def handler_new_member(message):
     bot.send_message(message.chat.id, "Здравствуйте, я бот ArdBot. Для управления используйте клавиатуру.", reply_markup=markup)
 @bot.message_handler(commands=["start"])
 def welcome(message):
-    markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
-    item1 = types.KeyboardButton("Профиль")
-    item2 = types.KeyboardButton("Анонс мероприятия")
-    item3 = types.KeyboardButton("Публикация")
     markup.add(item1, item2, item3)
     bot.send_message(message.chat.id, "Здравствуйте, я бот ArdBot. Для управления используйте клавиатуру.", reply_markup=markup)
 @bot.message_handler(content_types=["text"])
@@ -61,16 +62,22 @@ def menu(message):
             msg = bot.send_message(message.chat.id, "Дата мероприятия (ДД.ММ.ГГГГ):")
             bot.register_next_step_handler(msg, process_date)
         elif message.text == "Профиль":
-            bot.send_message(message.chat.id, "Раздел в разработке.")
-
-            name_bot = bot.send_message(message.chat.id, "Введите ваше имя: ")
+            name_bot = bot.send_message(message.chat.id, "Раздел в разработке.")
             bot.register_next_step_handler(name_bot, name_name)
         elif message.text == "sk":
             bot.send_message(message.chat.id, "Бот остановлен.")
             logger.error("Bot stop polling.")
             bot.stop_polling()
+        elif message.text == "Изменить профиль":
+            namere = bot.send_message(message.chat.id, "щдфыва")
+            bot.register_next_step_handler(namere, rename)
+        elif message.text == "Вернуться обратно":
+            back = bot.send_message(message.chat.id, "Введите еще раз")
+            bot.register_next_step_handler(back, welcome)
         else:
-            bot.send_message(message.chat.id, "Неизвестная комманда")
+            markup.add(item1, item2, item3)
+            
+            bot.send_message(message.chat.id, "Неизвестная комманда", reply_markup=markup)
 
 def process_date(message):
     try:
@@ -129,25 +136,51 @@ def event_info(message):
 #Профиль------------------
 def name_name(message):
     try:
-        if str(message.chat.id) in datebase.user:
-            bot.send_message(message.chat.id, "Собалезную")
+        if str(message.chat.id) in datebase.user_id:
+            bot.send_message(message.chat.id, "У вас уже есть аккаунт!")
+            markupc = types.ReplyKeyboardMarkup(resize_keyboard=True)
+            itemc1 = types.KeyboardButton("Изменить профиль")
+            itemc2 = types.KeyboardButton("Вернуться обратно")
+            markupc.add(itemc1, itemc2)
+            bot.send_message(message.chat.id, "Выберите комманду:", reply_markup=markupc)
         else:
-            user_id = message.from_user.id
-            user_name[user_id] = {"user_name:": message.text}
-            bot.send_message(message.chat.id, "Ваше имя:" + str(user_name[user_id]))
-            user_n_data = bot.send_message(message.chat.id, "Введите дату рождения: ")
-            bot.register_next_step_handler(user_n_data, user_n1_data)
-            logger.info(f"Новый пользователь:\n"+ str(user_name[user_id]))
+            name_name1 = bot.send_message(message.chat.id, "Введите ваше имя: ")
+            bot.register_next_step_handler(name_name1, name_data)
+            
     except Exception as e:
-        bot.send_message(message.chat.id, "Ошибка 3")     
+        bot.send_message(message.chat.id, "Ошибка 3")  
+def name_data(message):
+    try:
+        user_id = message.from_user.id
+        user_name[user_id] = {"user_name:": message.text}
+        user_name1 = message.text
+        bot.send_message(message.chat.id, "Ваше имя:" + str(user_name[user_id]))
+        user_n_data = bot.send_message(message.chat.id, "Введите дату рождения: ")
+        bot.register_next_step_handler(user_n_data, user_n1_data)
+        datebase.user_name.append(str(user_name1))
+    except Exception as e:
+        bot.send_message(message.chat.id, "Ошибка 4")   
 def user_n1_data(message):
     try:
+        datebase.user_id.append(str(message.chat.id))
+        user_data1 = message.text
+        datebase.user_data.append(str(user_data1))
         user_id = message.from_user.id
         user_data[user_id] = {"Дата пользователя": message.text}
         bot.send_message(message.chat.id, "Ваша дата:" + str(user_data[user_id]) + "\nВаше имя"+ str(user_name[user_id]))
+        bot.send_message(message.chat.id, "Нажмите снова `Профиль`")
+
         logger.info("Новый пользователь: " + str(user_name[user_id]) + str(user_data[user_id]))
+        print(datebase.user_id, datebase.user_name, datebase.user_data)
     except Exception as e:
         bot.send_message(message.chat.id, "Ошибка")
+
+#Изменение профиля
+def rename(message):
+    try:
+        bot.send_message(message.chat.id, "щдфыва")
+    except Exception as e:
+        bot.send_message(message.chat.id, "щдфыв1а")
 #Админка--------------------
 def adm_start(message):
     try:
